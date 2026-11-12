@@ -20,7 +20,7 @@ a{color:inherit}
 nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:rgba(255,250,242,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;justify-content:space-between;height:82px;gap:20px}
 .brand{display:flex;align-items:center;gap:14px;text-decoration:none}
-.brand img{width:55px;height:55px;display:block}
+.brand img{width:55px;height:55px;display:block;border-radius:50%;object-fit:cover;background:#000;border:2px solid var(--red);box-shadow:0 3px 10px rgba(0,0,0,.15);flex-shrink:0}
 .brand b{display:block;font-size:19px;font-weight:800;letter-spacing:.02em;line-height:1.1}
 .brand small{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--red);text-transform:uppercase}
 nav ul{display:flex;gap:30px;list-style:none;margin:0;padding:0;font-weight:700;font-size:15px}
@@ -125,7 +125,7 @@ section{padding:70px 0}
 @media(max-width:860px){
   nav .wrap{height:auto;min-height:72px;padding-top:10px;padding-bottom:10px;gap:12px}
   .brand{min-width:0;gap:9px}
-  .brand img{width:43px!important;height:43px!important;flex:0 0 43px}
+  .brand img{width:43px!important;height:43px!important;flex:0 0 43px;border-radius:50%;object-fit:cover}
   .brand b{font-size:15px!important}
   .brand small{font-size:8px;letter-spacing:.06em;line-height:1.35}
   nav .community-link{padding:10px 13px;font-size:11px;line-height:1.2;max-width:142px;white-space:normal;text-align:center;flex:0 0 auto}
