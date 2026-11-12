@@ -139,8 +139,9 @@ section{padding:70px 0}
   .cta .btn{width:100%;min-width:0;min-height:48px;padding:12px 10px;font-size:13px;white-space:normal;line-height:1.25}
   .cta .community-link{grid-column:1/-1}
   .ringbox{order:-1;width:min(62vw,260px);margin:0 auto}
-  /* Keep the mobile hero clean: hide decorative dashed rings that peek above the eyebrow */
-  .ringbox .ring{display:none}
+  /* Keep both orbital rings visible and rotating on mobile */
+  .ringbox .ring{display:block;animation:spin 60s linear infinite;will-change:transform}
+  .ringbox .ring.two{animation:spin 45s linear infinite reverse;will-change:transform}
   .logo{width:72%}
   section{padding:58px 0}
   .about{gap:24px}
