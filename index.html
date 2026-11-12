@@ -67,6 +67,7 @@ h2 em{font-style:normal;color:var(--red)}
 .ride:hover{transform:translateX(10px);box-shadow:0 16px 34px rgba(0,0,0,.07);border-color:var(--red)}
 .date{background:var(--bg);border:1px solid var(--line);border-radius:18px;text-align:center;padding:12px 0;font-size:13px;font-weight:800;letter-spacing:.14em;color:var(--red);line-height:1.2}
 .date b{display:block;font-size:38px;font-weight:900;letter-spacing:-.04em;color:var(--ink)}
+.date.multi b{font-size:25px;letter-spacing:-.06em}
 .ride h3{font-size:26px;margin-bottom:6px}
 .ride p{margin:0;color:var(--mute);font-size:15px;line-height:1.5}
 .tag{font-weight:700;font-size:13px;background:#FFF3CF;color:#7A5A00;border-radius:999px;padding:7px 16px;white-space:nowrap}
@@ -138,6 +139,8 @@ section{padding:70px 0}
   .cta .btn{width:100%;min-width:0;min-height:48px;padding:12px 10px;font-size:13px;white-space:normal;line-height:1.25}
   .cta .community-link{grid-column:1/-1}
   .ringbox{order:-1;width:min(62vw,260px);margin:0 auto}
+  /* Keep the mobile hero clean: hide decorative dashed rings that peek above the eyebrow */
+  .ringbox .ring{display:none}
   .logo{width:72%}
   section{padding:58px 0}
   .about{gap:24px}
@@ -169,9 +172,10 @@ section{padding:70px 0}
   .stats{grid-template-columns:1fr 1fr;gap:8px}
   .stat{padding:14px;border-radius:16px;font-size:12px}
   .stat b{font-size:34px}
-  .ride{grid-template-columns:58px minmax(0,1fr);padding:12px;border-radius:17px}
-  .date{font-size:10px;border-radius:12px}
+  .ride{grid-template-columns:78px minmax(0,1fr);padding:12px;border-radius:17px}
+  .date{font-size:10px;border-radius:12px;padding:12px 3px}
   .date b{font-size:29px}
+  .date.multi b{font-size:18px;letter-spacing:-.07em;white-space:nowrap}
   .ride h3{font-size:17px}
   .ride p{font-size:11px}
   .tag{font-size:11px;padding:6px 10px}
@@ -205,38 +209,169 @@ section{padding:70px 0}
 @keyframes rideRing{0%{transform:scale(.96);opacity:.65}100%{transform:scale(1.16);opacity:0}}
 @media(prefers-reduced-motion:reduce){.ride-join-btn,.ride-join-btn::after{animation:none!important}}
 
-/* DARK RIDERS - COMPACT RESPONSIVE FOOTER */
-.drb-footer{background:#171717;color:#fff;padding:22px 0 12px;margin-top:40px;border-top:3px solid #DB1A22}
-.footer-top{display:grid;grid-template-columns:1.2fr 1fr 1.2fr;gap:20px;align-items:center;padding-bottom:16px}
-.footer-brand h2{font-size:19px;line-height:1.2;margin-bottom:6px;color:#fff}
-.footer-brand h2 span{color:#FFC93C}
-.footer-brand p,.footer-contact p{color:#bbb;font-size:12px;line-height:1.5;margin:4px 0}
-.footer-social h3,.footer-contact h3{font-size:12px;color:#FFC93C;margin-bottom:8px;letter-spacing:.5px}
-.social-links{display:flex;flex-direction:row;flex-wrap:wrap;gap:12px}
-.social-links a{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:12px;text-decoration:none}
-.social-links a:hover{color:#FFC93C}
-.social-links svg{width:17px;height:17px}
-.footer-contact a{display:inline-block;color:#FFC93C;font-size:14px;font-weight:700;text-decoration:none;margin:3px 0}
-.contact-note{font-size:10px!important}
-.footer-divider{height:1px;background:#444;margin-bottom:12px}
-.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px 14px}
-.developer-credit{display:flex;align-items:center;flex-wrap:wrap;gap:5px;font-size:10px;color:#aaa}
-.developer-credit strong{color:#FFC93C;font-size:12px}
-.developer-credit a{color:#fff;text-decoration:none}
-.footer-love,.footer-copy{color:#aaa;font-size:10px}
-.heart{color:#DB1A22;display:inline-block;animation:heartBeat 1.2s infinite}
-@keyframes heartBeat{50%{transform:scale(1.3)}}
-@media(max-width:760px){
-.drb-footer{padding:18px 0 12px;margin-top:30px}
-.footer-top{grid-template-columns:1fr 1fr;gap:14px 8px;padding-bottom:14px}
-.footer-brand{grid-column:1/-1;text-align:center}
-.footer-brand h2{font-size:17px}
-.footer-social,.footer-contact{text-align:center}
-.social-links{justify-content:center;gap:9px}
-.footer-bottom{flex-direction:column;justify-content:center;text-align:center;gap:7px}
-.developer-credit{justify-content:center}
+/* DARK RIDERS PREMIUM FOOTER */
+
+.drb-footer {
+  background: #171717;
+  color: #fff;
+  padding: 65px 0 22px;
+  margin-top: 80px;
+  border-top: 5px solid #DB1A22;
 }
-@media(max-width:380px){.footer-social h3,.footer-contact h3{font-size:10px}.footer-contact a{font-size:12px}}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1.2fr;
+  gap: 45px;
+  padding-bottom: 45px;
+}
+
+.footer-brand h2 {
+  font-size: 27px;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.footer-brand h2 span {
+  color: #FFC93C;
+}
+
+.footer-brand p,
+.footer-contact p {
+  color: #c5c5c5;
+  font-size: 14px;
+}
+
+.footer-tagline {
+  margin-top: 8px;
+}
+
+.footer-social h3,
+.footer-contact h3 {
+  font-size: 15px;
+  color: #FFC93C;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.social-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: .3s;
+}
+
+.social-links a:hover {
+  color: #FFC93C;
+  transform: translateX(5px);
+}
+
+.social-links svg {
+  width: 24px;
+  height: 24px;
+}
+
+.footer-contact a {
+  display: inline-block;
+  color: #FFC93C;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 800;
+  margin: 8px 0;
+}
+
+.footer-contact a:hover {
+  color: #fff;
+}
+
+.contact-note {
+  font-size: 12px !important;
+}
+
+.footer-divider {
+  height: 1px;
+  background: #444;
+  margin-bottom: 22px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.developer-credit {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.developer-credit strong {
+  color: #FFC93C;
+  font-size: 15px;
+}
+
+.developer-credit a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-love,
+.footer-copy {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.heart {
+  color: #DB1A22;
+  display: inline-block;
+  animation: heartBeat 1.2s infinite;
+  font-size: 18px;
+}
+
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+@media(max-width:760px) {
+  .drb-footer {
+    padding: 45px 0 20px;
+    margin-top: 50px;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-bottom: 30px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 13px;
+  }
+
+  .footer-brand h2 {
+    font-size: 23px;
+  }
+}
 </style>
 </head>
 <body>
@@ -248,7 +383,7 @@ section{padding:70px 0}
 
 <header class="hero" id="top"><div class="wrap">
 <div>
-<div class="eyebrow">Bengaluru’s riding brotherhood</div>
+<div class="eyebrow">Bengaluru’s Riding Brotherhood & Sisterhood</div>
 <h1><span><i>One road.</i></span><span><i><em>Many</em> stories.</i></span></h1>
 <p class="lead">More than a motorcycle community. We’re riders who come together for the journey, the people, and the memories made along the way.</p>
 <div class="cta"><a class="btn" href="#join">Become a rider ↗</a><a class="btn community-link" id="heroJoinLink" href="PASTE_YOUR_EXTERNAL_LINK_HERE" target="_blank" rel="noopener noreferrer">Join our community for free ↗</a></div>
@@ -278,10 +413,9 @@ section{padding:70px 0}
 <section id="rides" style="padding-top:20px"><div class="wrap">
 <div class="eyebrow rv">On the calendar</div>
 <h2 class="rv">Upcoming <em>rides</em></h2>
-<p class="sub rv">Sample schedule. Replace with your real dates before sharing.</p>
-<div class="ride rv"><div class="date"><b>15</b>NOV</div><div><h3>Nandi Hills sunrise run</h3><p>Meet at 4:30 AM, Hebbal flyover. About 120 km round trip.</p></div><span class="tag">Beginner friendly</span></div>
-<div class="ride rv"><div class="date"><b>22</b>NOV</div><div><h3>Savandurga breakfast ride</h3><p>Meet at 6:00 AM, Nice Road toll. Breakfast stop on the way back.</p></div><span class="tag">All riders</span></div>
-<div class="ride rv"><div class="date"><b>06</b>DEC</div><div><h3>Coorg weekend tour</h3><p>Two days, one night stay. Limited to 40 riders.</p></div><span class="tag">Experienced</span></div>
+<p class="sub rv">Mark your calendar and ride with DARK RIDERS Bengaluru.</p>
+<div class="ride rv"><div class="date"><b>15</b>NOV</div><div><h3>King Richard’s Wonder World</h3><p>Upcoming community ride destination.</p></div><span class="tag">Upcoming ride</span></div>
+<div class="ride rv"><div class="date multi"><b>12&amp;13</b>DEC</div><div><h3>Gandikota</h3><p>Two-day community ride on 12th and 13th December.</p></div><span class="tag">Upcoming ride</span></div>
 </div></section>
 
 <section id="routes" style="padding-top:20px"><div class="wrap">
