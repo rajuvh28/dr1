@@ -1,1 +1,1214 @@
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flower Work Manager</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    padding:12px;
+    font-family:Arial,sans-serif;
+    background:white;
+    color:black;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h2,h3{text-align:center}
+
+button,input,select{
+    padding:10px;
+    border:1px solid black;
+    background:white;
+    color:black;
+    font-size:14px;
+    border-radius:0;
+}
+
+button{
+    font-weight:bold;
+    cursor:pointer;
+}
+
+input,select{width:100%}
+
+label{
+    font-size:13px;
+    font-weight:bold;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin:15px 0;
+}
+
+.section{
+    border:1px solid black;
+    padding:12px;
+    margin:15px 0;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:12px 0;
+}
+
+.actions button{
+    flex:1;
+    min-width:100px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    border:1px solid black;
+    padding:9px 5px;
+    text-align:center;
+    font-size:12px;
+}
+
+th{
+    background:black;
+    color:white;
+}
+
+tfoot td{font-weight:bold}
+
+/* CALENDAR */
+
+.calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+    text-align:center;
+}
+
+.calendar .day{
+    border:1px solid black;
+    min-width:0;
+}
+
+.calendar button{
+    width:100%;
+    border:0;
+    padding:9px 2px;
+    background:transparent;
+    font-size:12px;
+}
+
+.calendar .day-name{
+    background:black;
+    color:white;
+    padding:9px 1px;
+    font-size:11px;
+}
+
+/* STATUS COLORS */
+
+.normal{
+    background:#d8f3dc;
+}
+
+.upcoming{
+    background:white;
+}
+
+.changed{
+    background:#fff0bd;
+}
+
+.absent{
+    background:#ffdada;
+}
+
+.today{
+    outline:2px solid black;
+    outline-offset:-3px;
+}
+
+.selected{
+    border:3px solid black!important;
+    font-weight:bold;
+}
+
+.empty{
+    border:0!important;
+}
+
+.total{
+    border:1px solid black;
+    padding:14px;
+    text-align:right;
+    font-weight:bold;
+    margin-top:12px;
+}
+
+.small{font-size:11px}
+
+#preview{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:white;
+    z-index:20;
+    overflow:auto;
+    padding:12px;
+}
+
+#report{
+    max-width:950px;
+    margin:auto;
+}
+
+@media(max-width:550px){
+    body{padding:6px}
+    .section{padding:7px}
+    .grid{gap:8px}
+    th,td{
+        font-size:10px;
+        padding:6px 2px;
+    }
+    .calendar{gap:2px}
+    .calendar button{padding:8px 0}
+}
+
+@media print{
+    button{display:none}
+    #preview{
+        position:static;
+        display:block;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>FLOWER WORK MANAGER</h2>
+
+<p style="text-align:center;font-size:12px">
+DAILY FLOWER TYING REGISTER
+</p>
+
+<hr>
+
+<!-- ACCOUNT SUMMARY -->
+
+<div class="section">
+
+<h3>ACCOUNT SUMMARY</h3>
+
+<table>
+<tr>
+<th>TOTAL EARNINGS</th>
+</tr>
+
+<tr>
+<td id="grandTotal">₹0</td>
+</tr>
+</table>
+
+</div>
+
+<!-- ATTENDANCE CALENDAR -->
+
+<div class="section">
+
+<h3>MONTHLY ATTENDANCE CALENDAR</h3>
+
+<div class="actions" style="align-items:center">
+<button onclick="changeMonth(-1)">PREVIOUS</button>
+
+<strong id="monthTitle"></strong>
+
+<button onclick="changeMonth(1)">NEXT</button>
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+<p class="small">
+🟩 NORMAL &nbsp;
+⬜ UPCOMING &nbsp;
+🟨 CHANGED TIME &nbsp;
+🟥 ABSENT
+</p>
+
+<div id="dateEditor"
+style="display:none;border:1px solid black;padding:12px;margin-top:12px">
+
+<h3 id="selectedDate"></h3>
+
+<div class="field">
+
+<label>ATTENDANCE STATUS</label>
+
+<select id="dayStatus" onchange="toggleTime()">
+<option value="normal">Normal / Present</option>
+<option value="changed">Change Arrival Time</option>
+<option value="absent">Absent</option>
+</select>
+
+</div>
+
+<div class="field" id="timeField" style="margin-top:10px">
+
+<label>ARRIVAL TIME</label>
+
+<input type="time" id="customTime" value="16:30">
+
+</div>
+
+<div class="actions">
+<button onclick="saveAttendance()">SAVE DATE</button>
+<button onclick="resetAttendance()">RESET NORMAL</button>
+</div>
+
+</div>
+</div>
+
+<!-- FLOWER WORK ENTRY -->
+
+<div class="section">
+
+<h3>ADD FLOWER WORK DETAILS</h3>
+
+<div class="grid">
+
+<div class="field">
+<label>WORK DATE</label>
+<input type="date" id="workDate">
+</div>
+
+<div class="field">
+<label>WORK DONE BY</label>
+<input type="text" id="worker" placeholder="Enter person's name">
+</div>
+
+<div class="field">
+<label>FLOWER NAME</label>
+<input type="text" id="flower" placeholder="Example: Lily">
+</div>
+
+<div class="field">
+<label>HOW MANY FEET TIED</label>
+<input type="number" id="feet" min="0" step="any" placeholder="Example: 30">
+</div>
+
+<div class="field">
+<label>RATE PER FEET (₹)</label>
+<input type="number" id="rate" min="0" step="any" value="10">
+</div>
+
+<div class="field">
+<label>TOTAL AMOUNT (₹)</label>
+<input type="number" id="amount" readonly value="0">
+</div>
+
+</div>
+
+<div class="actions">
+<button onclick="addEntry()">WORK DONE - SAVE ENTRY</button>
+<button onclick="clearForm()">CLEAR FORM</button>
+</div>
+
+</div>
+
+<!-- FLOWER WORK TABLE -->
+
+<div class="section">
+
+<h3>FLOWER WORK HISTORY</h3>
+
+<div style="overflow-x:auto">
+
+<table>
+
+<thead>
+<tr>
+<th>SL</th>
+<th>DATE</th>
+<th>WORK DONE BY</th>
+<th>FLOWER</th>
+<th>FEET</th>
+<th>RATE</th>
+<th>AMOUNT</th>
+<th>DELETE</th>
+</tr>
+</thead>
+
+<tbody id="rows"></tbody>
+
+<tfoot>
+<tr>
+<td colspan="4">TOTAL</td>
+<td id="totalFeet">0</td>
+<td>-</td>
+<td id="totalAmount">₹0</td>
+<td>-</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+
+<!-- BACKUP AND REPORT -->
+
+<div class="section">
+
+<h3>REPORT & BACKUP</h3>
+
+<div class="actions">
+
+<button onclick="showPreview()">PREVIEW REPORT</button>
+
+<button onclick="backup()">EXPORT BACKUP</button>
+
+<button onclick="importFile()">IMPORT BACKUP</button>
+
+<button onclick="clearAll()">DELETE ALL DATA</button>
+
+</div>
+
+<input
+type="file"
+id="backupFile"
+accept=".json,application/json"
+style="display:none"
+onchange="restoreBackup(event)"
+>
+
+</div>
+
+</div>
+
+<!-- REPORT PREVIEW -->
+
+<div id="preview">
+
+<div id="report">
+
+<h2>FLOWER WORK REPORT</h2>
+
+<p style="text-align:center">
+DAILY FLOWER TYING REGISTER
+</p>
+
+<hr>
+
+<p id="reportInfo"></p>
+
+<table>
+
+<thead>
+<tr>
+<th>SL</th>
+<th>DATE</th>
+<th>WORK DONE BY</th>
+<th>FLOWER</th>
+<th>FEET</th>
+<th>RATE</th>
+<th>AMOUNT</th>
+</tr>
+</thead>
+
+<tbody id="reportRows"></tbody>
+
+<tfoot>
+<tr>
+<td colspan="4">TOTAL</td>
+<td id="rFeet">0</td>
+<td>-</td>
+<td id="rAmount">₹0</td>
+</tr>
+</tfoot>
+
+</table>
+
+<h3 id="rOverall"></h3>
+
+<hr>
+
+<p style="text-align:center;font-size:11px">
+FLOWER WORK ACCOUNT STATEMENT
+</p>
+
+</div>
+
+<div class="actions">
+
+<button onclick="saveImage()">SAVE REPORT IMAGE</button>
+
+<button onclick="window.print()">PRINT REPORT</button>
+
+<button onclick="closePreview()">CLOSE</button>
+
+</div>
+
+</div>
+
+<script>
+
+// ===================================
+// STORAGE
+// ===================================
+
+let entries=[];
+let attendance={};
+
+try{
+    entries=JSON.parse(
+        localStorage.getItem("flowerRegister")
+    )||[];
+
+    attendance=JSON.parse(
+        localStorage.getItem("flowerAttendance")
+    )||{};
+
+}catch(e){
+    entries=[];
+    attendance={};
+}
+
+const $=id=>document.getElementById(id);
+
+$("workDate").value=new Date().toLocaleDateString("en-CA");
+
+// ===================================
+// COMMON FUNCTIONS
+// ===================================
+
+function money(n){
+    return "₹"+Number(n).toLocaleString("en-IN");
+}
+
+function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g,c=>({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+    }[c]));
+}
+
+function fmtDate(d){
+    return new Date(d+"T00:00:00")
+    .toLocaleDateString("en-IN");
+}
+
+function save(){
+    localStorage.setItem(
+        "flowerRegister",
+        JSON.stringify(entries)
+    );
+
+    localStorage.setItem(
+        "flowerAttendance",
+        JSON.stringify(attendance)
+    );
+}
+
+// ===================================
+// CALCULATOR
+// ===================================
+
+function calculate(){
+
+    let feet=Number($("feet").value)||0;
+    let rate=Number($("rate").value)||0;
+
+    $("amount").value=feet*rate;
+}
+
+$("feet").addEventListener("input",calculate);
+$("rate").addEventListener("input",calculate);
+
+// ===================================
+// ADD WORK ENTRY
+// ===================================
+
+function addEntry(){
+
+    let date=$("workDate").value;
+    let worker=$("worker").value.trim();
+    let flower=$("flower").value.trim();
+    let feet=Number($("feet").value);
+    let rate=Number($("rate").value);
+
+    if(
+        !date ||
+        !worker ||
+        !flower ||
+        $("feet").value==="" ||
+        $("rate").value==="" ||
+        feet<=0 ||
+        rate<0 ||
+        !Number.isFinite(feet) ||
+        !Number.isFinite(rate)
+    ){
+        alert("Please enter all valid details.");
+        return;
+    }
+
+    entries.push({
+        id:Date.now()+Math.random(),
+        date,
+        worker,
+        flower,
+        feet,
+        rate,
+        amount:feet*rate
+    });
+
+    if(!attendance[date]){
+        attendance[date]={status:"normal"};
+    }
+
+    save();
+    render();
+    renderCalendar();
+    clearForm();
+
+    alert("WORK DONE! Entry saved successfully.");
+}
+
+function clearForm(){
+
+    $("worker").value="";
+    $("flower").value="";
+    $("feet").value="";
+
+    calculate();
+}
+
+// ===================================
+// DELETE ENTRY
+// ===================================
+
+function removeEntry(id){
+
+    if(!confirm("Delete this entry?"))return;
+
+    entries=entries.filter(e=>e.id!==id);
+
+    save();
+    render();
+}
+
+// ===================================
+// DISPLAY TABLE
+// ===================================
+
+function render(){
+
+    $("rows").innerHTML=entries.map((e,i)=>`
+
+    <tr>
+        <td>${i+1}</td>
+        <td>${fmtDate(e.date)}</td>
+        <td>${escapeHTML(e.worker||"-")}</td>
+        <td>${escapeHTML(e.flower)}</td>
+        <td>${e.feet}</td>
+        <td>${money(e.rate)}</td>
+        <td>${money(e.amount)}</td>
+
+        <td>
+        <button onclick="removeEntry(${e.id})">X</button>
+        </td>
+    </tr>
+
+    `).join("");
+
+    let feet=entries.reduce(
+        (s,e)=>s+Number(e.feet),0
+    );
+
+    let total=entries.reduce(
+        (s,e)=>s+Number(e.amount),0
+    );
+
+    $("totalFeet").textContent=feet;
+    $("totalAmount").textContent=money(total);
+    $("grandTotal").textContent=money(total);
+}
+
+// ===================================
+// CALENDAR
+// ===================================
+
+let calendarMonth=new Date().getMonth();
+let calendarYear=new Date().getFullYear();
+let selectedDay=null;
+
+function dateKey(y,m,d){
+
+    return y+"-"+
+    String(m+1).padStart(2,"0")+"-"+
+    String(d).padStart(2,"0");
+}
+
+function changeMonth(dir){
+
+    calendarMonth+=dir;
+
+    if(calendarMonth>11){
+        calendarMonth=0;
+        calendarYear++;
+    }
+
+    if(calendarMonth<0){
+        calendarMonth=11;
+        calendarYear--;
+    }
+
+    selectedDay=null;
+    $("dateEditor").style.display="none";
+
+    renderCalendar();
+}
+
+// ===================================
+// UPDATED CALENDAR DISPLAY
+// ===================================
+
+function renderCalendar(){
+
+    let first=new Date(
+        calendarYear,
+        calendarMonth,
+        1
+    ).getDay();
+
+    let days=new Date(
+        calendarYear,
+        calendarMonth+1,
+        0
+    ).getDate();
+
+    $("monthTitle").textContent=
+    new Date(calendarYear,calendarMonth)
+    .toLocaleDateString("en-IN",{
+        month:"long",
+        year:"numeric"
+    });
+
+    let html="";
+
+    ["SUN","MON","TUE","WED","THU","FRI","SAT"]
+    .forEach(d=>{
+        html+=`<div class="day-name">${d}</div>`;
+    });
+
+    for(let i=0;i<first;i++){
+        html+=`<div class="day empty"></div>`;
+    }
+
+    let now=new Date();
+
+    now.setHours(0,0,0,0);
+
+    for(let d=1;d<=days;d++){
+
+        let key=dateKey(
+            calendarYear,
+            calendarMonth,
+            d
+        );
+
+        let currentDate=new Date(
+            calendarYear,
+            calendarMonth,
+            d
+        );
+
+        let data=attendance[key];
+
+        let status=data?data.status:"normal";
+
+        let isFuture=currentDate>now;
+
+        let cls="";
+
+        // Manual absence always red
+        if(status==="absent"){
+            cls="absent";
+        }
+
+        // Manual time change always yellow
+        else if(status==="changed"){
+            cls="changed";
+        }
+
+        // Future unmodified dates white
+        else if(isFuture&&!data){
+            cls="upcoming";
+        }
+
+        // Today and past dates green
+        else{
+            cls="normal";
+        }
+
+        let symbol=
+            status==="absent"?"A":
+            status==="changed"?"C":
+            cls==="upcoming"?"-":"P";
+
+        let todayClass=
+            currentDate.getTime()===now.getTime()
+            ?"today":"";
+
+        let selected=
+            selectedDay===key?"selected":"";
+
+        html+=`
+
+        <div class="day ${cls} ${todayClass} ${selected}">
+
+            <button onclick="selectDate('${key}')">
+
+                <b>${d}</b><br>
+                ${symbol}
+
+            </button>
+
+        </div>
+
+        `;
+    }
+
+    $("calendar").innerHTML=html;
+}
+
+// ===================================
+// SELECT DATE
+// ===================================
+
+function selectDate(key){
+
+    selectedDay=key;
+
+    let data=attendance[key]||{
+        status:"normal",
+        time:"16:30"
+    };
+
+    $("selectedDate").textContent=
+    "SELECTED DATE: "+fmtDate(key);
+
+    $("dayStatus").value=data.status||"normal";
+
+    $("customTime").value=data.time||"16:30";
+
+    $("dateEditor").style.display="block";
+
+    toggleTime();
+    renderCalendar();
+}
+
+function toggleTime(){
+
+    $("timeField").style.display=
+    $("dayStatus").value==="changed"
+    ?"flex":"none";
+}
+
+// ===================================
+// SAVE ATTENDANCE
+// ===================================
+
+function saveAttendance(){
+
+    if(!selectedDay)return;
+
+    let status=$("dayStatus").value;
+    let time=$("customTime").value;
+
+    if(status==="changed"&&!time){
+        alert("Select arrival time.");
+        return;
+    }
+
+    attendance[selectedDay]={
+        status,
+        time:status==="changed"?time:"16:30"
+    };
+
+    save();
+    renderCalendar();
+
+    alert("Attendance updated.");
+}
+
+function resetAttendance(){
+
+    if(!selectedDay)return;
+
+    delete attendance[selectedDay];
+
+    save();
+
+    selectedDay=null;
+
+    $("dateEditor").style.display="none";
+
+    renderCalendar();
+}
+
+// ===================================
+// PREVIEW REPORT
+// ===================================
+
+function showPreview(){
+
+    if(!entries.length){
+        alert("No work records available.");
+        return;
+    }
+
+    let sorted=[...entries].sort(
+        (a,b)=>a.date.localeCompare(b.date)
+    );
+
+    $("reportRows").innerHTML=sorted.map((e,i)=>`
+
+    <tr>
+        <td>${i+1}</td>
+        <td>${fmtDate(e.date)}</td>
+        <td>${escapeHTML(e.worker||"-")}</td>
+        <td>${escapeHTML(e.flower)}</td>
+        <td>${e.feet}</td>
+        <td>${money(e.rate)}</td>
+        <td>${money(e.amount)}</td>
+    </tr>
+
+    `).join("");
+
+    let total=entries.reduce(
+        (s,e)=>s+e.amount,0
+    );
+
+    let feet=entries.reduce(
+        (s,e)=>s+e.feet,0
+    );
+
+    $("rFeet").textContent=feet;
+    $("rAmount").textContent=money(total);
+
+    $("rOverall").textContent=
+    "TOTAL EARNINGS: "+money(total);
+
+    $("reportInfo").textContent=
+    "Generated: "+new Date().toLocaleDateString("en-IN");
+
+    $("preview").style.display="block";
+}
+
+function closePreview(){
+    $("preview").style.display="none";
+}
+
+// ===================================
+// SAVE REPORT IMAGE
+// ===================================
+
+async function saveImage(){
+
+    let sorted=[...entries].sort(
+        (a,b)=>a.date.localeCompare(b.date)
+    );
+
+    let canvas=document.createElement("canvas");
+
+    let width=1200;
+    let rowHeight=65;
+
+    canvas.width=width;
+    canvas.height=370+sorted.length*rowHeight;
+
+    let ctx=canvas.getContext("2d");
+
+    ctx.fillStyle="white";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle="black";
+    ctx.textAlign="center";
+    ctx.font="bold 40px Arial";
+
+    ctx.fillText("FLOWER WORK REPORT",600,65);
+
+    ctx.font="22px Arial";
+
+    ctx.fillText(
+        "DAILY FLOWER TYING REGISTER",
+        600,110
+    );
+
+    ctx.textAlign="left";
+    ctx.font="20px Arial";
+
+    ctx.fillText(
+        "Generated: "+new Date().toLocaleDateString("en-IN"),
+        35,165
+    );
+
+    let x=[35,130,290,500,760,870,1020];
+
+    let heads=[
+        "SL","DATE","WORKER","FLOWER",
+        "FEET","RATE","AMOUNT"
+    ];
+
+    ctx.fillStyle="black";
+    ctx.fillRect(20,195,1160,60);
+
+    ctx.fillStyle="white";
+    ctx.font="bold 18px Arial";
+
+    heads.forEach((h,i)=>{
+        ctx.fillText(h,x[i],233);
+    });
+
+    let y=300;
+
+    ctx.fillStyle="black";
+    ctx.font="18px Arial";
+
+    sorted.forEach((e,i)=>{
+
+        let values=[
+            i+1,
+            fmtDate(e.date),
+            e.worker||"-",
+            e.flower,
+            e.feet,
+            money(e.rate),
+            money(e.amount)
+        ];
+
+        values.forEach((v,j)=>{
+            ctx.fillText(String(v),x[j],y);
+        });
+
+        ctx.beginPath();
+        ctx.strokeStyle="black";
+        ctx.moveTo(20,y+18);
+        ctx.lineTo(1180,y+18);
+        ctx.stroke();
+
+        y+=rowHeight;
+    });
+
+    let total=entries.reduce(
+        (s,e)=>s+e.amount,0
+    );
+
+    let feet=entries.reduce(
+        (s,e)=>s+e.feet,0
+    );
+
+    ctx.font="bold 24px Arial";
+
+    ctx.fillText(
+        "TOTAL FEET: "+feet,
+        35,y+40
+    );
+
+    ctx.textAlign="right";
+
+    ctx.fillText(
+        "TOTAL: "+money(total),
+        1160,y+40
+    );
+
+    canvas.toBlob(async blob=>{
+
+        if(!blob){
+            alert("Image generation failed.");
+            return;
+        }
+
+        let file=new File(
+            [blob],
+            "Flower-Work-Report.png",
+            {type:"image/png"}
+        );
+
+        try{
+
+            if(
+                navigator.canShare&&
+                navigator.canShare({files:[file]})
+            ){
+
+                await navigator.share({
+                    files:[file],
+                    title:"Flower Work Report"
+                });
+
+                return;
+            }
+
+        }catch(e){
+
+            if(e.name==="AbortError")return;
+        }
+
+        let url=URL.createObjectURL(blob);
+
+        let a=document.createElement("a");
+
+        a.href=url;
+        a.download="Flower-Work-Report.png";
+        a.click();
+
+        setTimeout(
+            ()=>URL.revokeObjectURL(url),
+            3000
+        );
+
+    },"image/png");
+}
+
+// ===================================
+// BACKUP
+// ===================================
+
+function backup(){
+
+    let data={
+        entries,
+        attendance
+    };
+
+    let blob=new Blob(
+        [JSON.stringify(data,null,2)],
+        {type:"application/json"}
+    );
+
+    let url=URL.createObjectURL(blob);
+
+    let a=document.createElement("a");
+
+    a.href=url;
+    a.download="flower-work-backup.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+// ===================================
+// IMPORT BACKUP
+// ===================================
+
+function importFile(){
+    $("backupFile").click();
+}
+
+function restoreBackup(event){
+
+    let file=event.target.files[0];
+
+    if(!file)return;
+
+    let reader=new FileReader();
+
+    reader.onload=()=>{
+
+        try{
+
+            let data=JSON.parse(reader.result);
+
+            if(
+                !data||
+                !Array.isArray(data.entries)||
+                !data.attendance||
+                typeof data.attendance!=="object"||
+                Array.isArray(data.attendance)
+            ){
+                throw new Error("Invalid backup");
+            }
+
+            if(!confirm(
+                "Replace current records with this backup?"
+            ))return;
+
+            entries=data.entries;
+            attendance=data.attendance;
+
+            save();
+            render();
+            renderCalendar();
+
+            alert("Backup restored successfully.");
+
+        }catch(e){
+
+            alert("Invalid backup file.");
+
+        }
+
+        event.target.value="";
+    };
+
+    reader.readAsText(file);
+}
+
+// ===================================
+// DELETE ALL
+// ===================================
+
+function clearAll(){
+
+    if(!confirm(
+        "Delete all flower records and attendance?"
+    ))return;
+
+    entries=[];
+    attendance={};
+
+    save();
+    render();
+    renderCalendar();
+
+    alert("All data deleted.");
+}
+
+// ===================================
+// INITIALIZE
+// ===================================
+
+render();
+renderCalendar();
+calculate();
+
+</script>
+</body>
+</html>
