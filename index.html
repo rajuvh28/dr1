@@ -1,1214 +1,1032 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flower Work Manager</title>
+<title>Flower Work Register</title>
 
 <style>
+:root{
+  --bg:#f3f5f8;
+  --white:#fff;
+  --ink:#20252b;
+  --muted:#697482;
+  --line:#dce1e8;
+  --blue:#315fbd;
+  --green:#23834b;
+  --red:#c43d3d;
+  --purple:#7050a4;
+}
 *{box-sizing:border-box}
-
 body{
-    margin:0;
-    padding:12px;
-    font-family:Arial,sans-serif;
-    background:white;
-    color:black;
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
 }
-
-.container{
-    max-width:1000px;
-    margin:auto;
+.container{max-width:1150px;margin:auto;padding:16px}
+header{
+  background:#20252b;color:white;padding:16px 20px;
+  border-radius:12px;margin-bottom:16px;
+  display:flex;justify-content:space-between;
+  align-items:center;gap:12px;flex-wrap:wrap;
 }
-
-h2,h3{text-align:center}
-
-button,input,select{
-    padding:10px;
-    border:1px solid black;
-    background:white;
-    color:black;
-    font-size:14px;
-    border-radius:0;
+.brand{display:flex;align-items:center;gap:11px;font-weight:bold;font-size:17px}
+.brand-icon{
+  width:38px;height:38px;border-radius:9px;
+  background:#ffffff18;display:grid;place-items:center;
 }
-
-button{
-    font-weight:bold;
-    cursor:pointer;
+.brand-icon svg{width:24px;height:24px}
+.card{
+  background:white;border:1px solid var(--line);
+  border-radius:12px;padding:17px;margin-bottom:16px;
 }
-
-input,select{width:100%}
-
+h2{
+  font-size:17px;margin:0 0 15px;
+  display:flex;align-items:center;gap:9px;
+}
+h2 svg{width:20px;height:20px;color:var(--blue)}
+h3{font-size:14px;margin:0 0 10px}
 label{
-    font-size:13px;
-    font-weight:bold;
+  display:block;font-size:12px;font-weight:bold;
+  margin-bottom:6px;color:#505965;
 }
-
-.field{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
+input,select{
+  width:100%;padding:11px;border:1px solid #cbd2dc;
+  border-radius:7px;background:white;font-size:14px;
+  min-width:0;color:#222;
 }
-
+input:focus,select:focus{
+  outline:2px solid #b8cdfb;border-color:var(--blue);
+}
 .grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin:15px 0;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
 }
-
-.section{
-    border:1px solid black;
-    padding:12px;
-    margin:15px 0;
+.field{min-width:0}
+button{
+  border:0;border-radius:7px;padding:10px 14px;
+  font-weight:bold;cursor:pointer;font-size:13px;
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:8px;min-height:40px;
 }
-
-.actions{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin:12px 0;
+button svg{width:16px;height:16px;flex-shrink:0}
+button:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:var(--blue);color:white}
+.success{background:var(--green);color:white}
+.danger{background:var(--red);color:white}
+.neutral{background:#e8edf3;color:#252b32}
+.purple{background:var(--purple);color:white}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.summary{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
 }
-
-.actions button{
-    flex:1;
-    min-width:100px;
+.summary-box{
+  padding:16px;border-radius:10px;background:#edf2fa;
+  border:1px solid #d9e3f5;
 }
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
+.summary-box small{
+  display:block;color:var(--muted);font-weight:bold;font-size:11px;
 }
-
+.summary-box strong{display:block;font-size:24px;margin-top:7px}
+.table-wrap{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;background:white}
 th,td{
-    border:1px solid black;
-    padding:9px 5px;
-    text-align:center;
-    font-size:12px;
+  border:1px solid #222;padding:9px 7px;text-align:center;
+  white-space:nowrap;
 }
-
-th{
-    background:black;
-    color:white;
+th{background:#ececec;color:#111}
+.empty{text-align:center;color:#7b8490;padding:20px}
+.calendar-head{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;margin-bottom:12px;
 }
-
-tfoot td{font-weight:bold}
-
-/* CALENDAR */
-
+.calendar-head strong{font-size:16px}
 .calendar{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:4px;
-    text-align:center;
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;
 }
-
-.calendar .day{
-    border:1px solid black;
-    min-width:0;
+.day-name{
+  text-align:center;font-size:11px;font-weight:bold;
+  color:#68717c;padding:5px 0;
 }
-
-.calendar button{
-    width:100%;
-    border:0;
-    padding:9px 2px;
-    background:transparent;
-    font-size:12px;
+.day{
+  min-height:47px;border:1px solid #d5dbe3;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;background:white;
 }
-
-.calendar .day-name{
-    background:black;
-    color:white;
-    padding:9px 1px;
-    font-size:11px;
+.day.blank{border:0;background:transparent;cursor:default}
+.day.green{background:#bfe8cd;border-color:#82c99b}
+.day.yellow{background:#ffe99b;border-color:#e8ce5c}
+.day.red{background:#f3bcbc;border-color:#df8888}
+.day.selected{outline:3px solid #315fbd;outline-offset:1px}
+.legend{
+  display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;
+  font-size:11px;color:#535d68;
 }
-
-/* STATUS COLORS */
-
-.normal{
-    background:#d8f3dc;
+.legend span{display:flex;align-items:center;gap:5px}
+.dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+.help{font-size:12px;color:var(--muted);line-height:1.5}
+.hidden{display:none!important}
+.report-head{text-align:center;margin-bottom:15px}
+.report-head h2{justify-content:center;margin-bottom:5px}
+.report-head p{font-size:12px;color:#555;margin:4px}
+.report-totals{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.report-total{border:1px solid #aaa;padding:10px;flex:1;min-width:120px}
+.report-total small{display:block;color:#555;font-size:11px}
+.report-total strong{font-size:19px;display:block;margin-top:5px}
+footer{text-align:center;color:#87909b;font-size:11px;padding:12px}
+@media(max-width:700px){
+  .container{padding:10px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card{padding:12px}
+  header{padding:13px}
+  th,td{padding:8px 5px;font-size:11px}
+  .day{min-height:39px}
 }
-
-.upcoming{
-    background:white;
+@media(max-width:430px){
+  .grid{grid-template-columns:1fr}
+  .summary-box strong{font-size:21px}
+  button{padding:10px 12px}
+  .brand{font-size:15px}
 }
-
-.changed{
-    background:#fff0bd;
-}
-
-.absent{
-    background:#ffdada;
-}
-
-.today{
-    outline:2px solid black;
-    outline-offset:-3px;
-}
-
-.selected{
-    border:3px solid black!important;
-    font-weight:bold;
-}
-
-.empty{
-    border:0!important;
-}
-
-.total{
-    border:1px solid black;
-    padding:14px;
-    text-align:right;
-    font-weight:bold;
-    margin-top:12px;
-}
-
-.small{font-size:11px}
-
-#preview{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:white;
-    z-index:20;
-    overflow:auto;
-    padding:12px;
-}
-
-#report{
-    max-width:950px;
-    margin:auto;
-}
-
-@media(max-width:550px){
-    body{padding:6px}
-    .section{padding:7px}
-    .grid{gap:8px}
-    th,td{
-        font-size:10px;
-        padding:6px 2px;
-    }
-    .calendar{gap:2px}
-    .calendar button{padding:8px 0}
-}
-
 @media print{
-    button{display:none}
-    #preview{
-        position:static;
-        display:block;
-    }
+  body{background:white}
+  header,.no-print,.calendar-card,.entry-card,.history-card,footer{
+    display:none!important;
+  }
+  .container{max-width:none;padding:0}
+  .card{border:0;padding:0}
 }
 </style>
 </head>
 
 <body>
 
+<!-- Built-in SVG icon library -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-flower" viewBox="0 0 24 24">
+    <path d="M12 12c-3-2-4-5-2-7 2-2 4 0 2 7Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 12c2-3 5-4 7-2 2 2 0 4-7 2Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 12c3 2 4 5 2 7-2 2-4 0-2-7Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 12c-2 3-5 4-7 2-2-2 0-4 7-2Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="12" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 20v3m0-2c-2-2-4-1-5 0" fill="none" stroke="currentColor" stroke-width="1.5"/>
+  </symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24">
+    <rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M7 3v4m10-4v4M3 10h18M7 14h2m3 0h2m-7 3h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-user" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M4 21c0-4 3-7 8-7s8 3 8 7" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  </symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24">
+    <rect x="5" y="4" width="14" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M9 4V2h6v2M8 10h8m-8 4h8m-8 4h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24">
+    <path d="M3 20h18M5 17V9h4v8m3 0V4h4v13m3 0v-6h2v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-download" viewBox="0 0 24 24">
+    <path d="M12 3v12m-5-5 5 5 5-5M4 19v2h16v-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24">
+    <path d="M4 7h16M10 11v7m4-7v7M6 7l1 14h10l1-14M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M12 7v5l4 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-calculator" viewBox="0 0 24 24">
+    <rect x="5" y="2" width="14" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M8 6h8v4H8zm0 8h1m3 0h1m3 0h1m-9 4h1m3 0h1m3 0h1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-save" viewBox="0 0 24 24">
+    <path d="M4 3h14l3 3v15H3V3h1Zm3 0v6h10V3M7 21v-8h10v8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24">
+    <path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-printer" viewBox="0 0 24 24">
+    <path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7zM17 11h1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24">
+    <rect x="4" y="10" width="16" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24">
+    <path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24">
+    <path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
 <div class="container">
 
-<h2>FLOWER WORK MANAGER</h2>
-
-<p style="text-align:center;font-size:12px">
-DAILY FLOWER TYING REGISTER
-</p>
-
-<hr>
-
-<!-- ACCOUNT SUMMARY -->
-
-<div class="section">
-
-<h3>ACCOUNT SUMMARY</h3>
-
-<table>
-<tr>
-<th>TOTAL EARNINGS</th>
-</tr>
-
-<tr>
-<td id="grandTotal">₹0</td>
-</tr>
-</table>
-
-</div>
-
-<!-- ATTENDANCE CALENDAR -->
-
-<div class="section">
-
-<h3>MONTHLY ATTENDANCE CALENDAR</h3>
-
-<div class="actions" style="align-items:center">
-<button onclick="changeMonth(-1)">PREVIOUS</button>
-
-<strong id="monthTitle"></strong>
-
-<button onclick="changeMonth(1)">NEXT</button>
-</div>
-
-<div class="calendar" id="calendar"></div>
-
-<p class="small">
-🟩 NORMAL &nbsp;
-⬜ UPCOMING &nbsp;
-🟨 CHANGED TIME &nbsp;
-🟥 ABSENT
-</p>
-
-<div id="dateEditor"
-style="display:none;border:1px solid black;padding:12px;margin-top:12px">
-
-<h3 id="selectedDate"></h3>
-
-<div class="field">
-
-<label>ATTENDANCE STATUS</label>
-
-<select id="dayStatus" onchange="toggleTime()">
-<option value="normal">Normal / Present</option>
-<option value="changed">Change Arrival Time</option>
-<option value="absent">Absent</option>
-</select>
-
-</div>
-
-<div class="field" id="timeField" style="margin-top:10px">
-
-<label>ARRIVAL TIME</label>
-
-<input type="time" id="customTime" value="16:30">
-
-</div>
-
-<div class="actions">
-<button onclick="saveAttendance()">SAVE DATE</button>
-<button onclick="resetAttendance()">RESET NORMAL</button>
-</div>
-
-</div>
-</div>
-
-<!-- FLOWER WORK ENTRY -->
-
-<div class="section">
-
-<h3>ADD FLOWER WORK DETAILS</h3>
-
-<div class="grid">
-
-<div class="field">
-<label>WORK DATE</label>
-<input type="date" id="workDate">
-</div>
-
-<div class="field">
-<label>WORK DONE BY</label>
-<input type="text" id="worker" placeholder="Enter person's name">
-</div>
-
-<div class="field">
-<label>FLOWER NAME</label>
-<input type="text" id="flower" placeholder="Example: Lily">
-</div>
-
-<div class="field">
-<label>HOW MANY FEET TIED</label>
-<input type="number" id="feet" min="0" step="any" placeholder="Example: 30">
-</div>
-
-<div class="field">
-<label>RATE PER FEET (₹)</label>
-<input type="number" id="rate" min="0" step="any" value="10">
-</div>
-
-<div class="field">
-<label>TOTAL AMOUNT (₹)</label>
-<input type="number" id="amount" readonly value="0">
-</div>
-
-</div>
-
-<div class="actions">
-<button onclick="addEntry()">WORK DONE - SAVE ENTRY</button>
-<button onclick="clearForm()">CLEAR FORM</button>
-</div>
-
-</div>
-
-<!-- FLOWER WORK TABLE -->
-
-<div class="section">
-
-<h3>FLOWER WORK HISTORY</h3>
-
-<div style="overflow-x:auto">
-
-<table>
-
-<thead>
-<tr>
-<th>SL</th>
-<th>DATE</th>
-<th>WORK DONE BY</th>
-<th>FLOWER</th>
-<th>FEET</th>
-<th>RATE</th>
-<th>AMOUNT</th>
-<th>DELETE</th>
-</tr>
-</thead>
-
-<tbody id="rows"></tbody>
-
-<tfoot>
-<tr>
-<td colspan="4">TOTAL</td>
-<td id="totalFeet">0</td>
-<td>-</td>
-<td id="totalAmount">₹0</td>
-<td>-</td>
-</tr>
-</tfoot>
-
-</table>
-
-</div>
-</div>
-
-<!-- BACKUP AND REPORT -->
-
-<div class="section">
-
-<h3>REPORT & BACKUP</h3>
-
-<div class="actions">
-
-<button onclick="showPreview()">PREVIEW REPORT</button>
-
-<button onclick="backup()">EXPORT BACKUP</button>
-
-<button onclick="importFile()">IMPORT BACKUP</button>
-
-<button onclick="clearAll()">DELETE ALL DATA</button>
-
-</div>
-
-<input
-type="file"
-id="backupFile"
-accept=".json,application/json"
-style="display:none"
-onchange="restoreBackup(event)"
->
-
-</div>
-
-</div>
-
-<!-- REPORT PREVIEW -->
-
-<div id="preview">
-
-<div id="report">
-
-<h2>FLOWER WORK REPORT</h2>
-
-<p style="text-align:center">
-DAILY FLOWER TYING REGISTER
-</p>
-
-<hr>
-
-<p id="reportInfo"></p>
-
-<table>
-
-<thead>
-<tr>
-<th>SL</th>
-<th>DATE</th>
-<th>WORK DONE BY</th>
-<th>FLOWER</th>
-<th>FEET</th>
-<th>RATE</th>
-<th>AMOUNT</th>
-</tr>
-</thead>
-
-<tbody id="reportRows"></tbody>
-
-<tfoot>
-<tr>
-<td colspan="4">TOTAL</td>
-<td id="rFeet">0</td>
-<td>-</td>
-<td id="rAmount">₹0</td>
-</tr>
-</tfoot>
-
-</table>
-
-<h3 id="rOverall"></h3>
-
-<hr>
-
-<p style="text-align:center;font-size:11px">
-FLOWER WORK ACCOUNT STATEMENT
-</p>
-
-</div>
-
-<div class="actions">
-
-<button onclick="saveImage()">SAVE REPORT IMAGE</button>
-
-<button onclick="window.print()">PRINT REPORT</button>
-
-<button onclick="closePreview()">CLOSE</button>
-
-</div>
-
+<header>
+  <div class="brand">
+    <span class="brand-icon">
+      <svg><use href="#i-flower"/></svg>
+    </span>
+    <span>FLOWER WORK REGISTER</span>
+  </div>
+  <span id="todayLabel" style="font-size:12px"></span>
+</header>
+
+<section class="card">
+  <div class="summary">
+    <div class="summary-box">
+      <small>TOTAL EARNINGS</small>
+      <strong id="totalEarnings">₹0.00</strong>
+    </div>
+    <div class="summary-box">
+      <small>TOTAL WORK ENTRIES</small>
+      <strong id="totalEntries">0</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ATTENDANCE -->
+<section class="card calendar-card">
+  <h2><svg><use href="#i-calendar"/></svg> Attendance Calendar</h2>
+
+  <div class="calendar-head">
+    <button class="neutral" onclick="changeMonth(-1)">
+      <svg><use href="#i-chevron-left"/></svg> Previous
+    </button>
+    <strong id="monthLabel"></strong>
+    <button class="neutral" onclick="changeMonth(1)">
+      Next <svg><use href="#i-chevron-right"/></svg>
+    </button>
+  </div>
+
+  <div class="calendar" id="calendar"></div>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#bfe8cd"></i>Normal / Past / Today</span>
+    <span><i class="dot" style="background:white;border:1px solid #aaa"></i>Upcoming</span>
+    <span><i class="dot" style="background:#ffe99b"></i>Changed time</span>
+    <span><i class="dot" style="background:#f3bcbc"></i>Absent</span>
+  </div>
+
+  <div style="margin-top:16px">
+    <h3 id="selectedDateLabel">Select a date</h3>
+    <div class="grid">
+      <div class="field">
+        <label>Attendance Status</label>
+        <select id="attendanceStatus" onchange="toggleArrivalTime()">
+          <option value="normal">Normal / Present</option>
+          <option value="changed">Change Arrival Time</option>
+          <option value="absent">Absent</option>
+        </select>
+      </div>
+      <div class="field hidden" id="arrivalField">
+        <label>Changed Arrival Time</label>
+        <input type="time" id="arrivalTime" value="16:30">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="success" onclick="saveAttendance()">
+        <svg><use href="#i-save"/></svg> Save Attendance
+      </button>
+      <button class="neutral" onclick="resetAttendance()">
+        <svg><use href="#i-reset"/></svg> Reset Selected Date
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ADD WORK -->
+<section class="card entry-card">
+  <h2><svg><use href="#i-flower"/></svg> Add Flower Work</h2>
+
+  <div class="grid">
+    <div class="field">
+      <label>Work Date</label>
+      <input type="date" id="workDate">
+    </div>
+    <div class="field">
+      <label>Work Done By</label>
+      <input type="text" id="worker" placeholder="Enter worker name">
+    </div>
+    <div class="field">
+      <label>Flower Name</label>
+      <input type="text" id="flower" placeholder="Enter flower name">
+    </div>
+    <div class="field">
+      <label>Calculation Type</label>
+      <select id="workType" onchange="updateCalculationLabels()">
+        <option value="feet">Feet Based</option>
+        <option value="pieces">Pieces Based</option>
+      </select>
+    </div>
+    <div class="field">
+      <label id="quantityLabel">Quantity (Feet)</label>
+      <input type="number" id="quantity" min="0" step="any" placeholder="Enter quantity" oninput="calculate()">
+    </div>
+    <div class="field">
+      <label id="rateLabel">Rate Per Feet (₹)</label>
+      <input type="number" id="rate" min="0" step="any" placeholder="Enter rate" oninput="calculate()">
+    </div>
+  </div>
+
+  <div class="summary-box" style="margin-top:14px">
+    <small>FINAL PRICE</small>
+    <strong id="finalPrice">₹0.00</strong>
+  </div>
+
+  <div class="actions">
+    <button class="success" onclick="addEntry()">
+      <svg><use href="#i-save"/></svg> WORK DONE - SAVE ENTRY
+    </button>
+    <button class="neutral" onclick="clearForm()">Clear Form</button>
+  </div>
+</section>
+
+<!-- WORK HISTORY -->
+<section class="card history-card">
+  <h2><svg><use href="#i-clipboard"/></svg> Work History</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>SL</th><th>DATE</th><th>WORKER</th><th>FLOWER</th>
+          <th>TYPE</th><th>QTY</th><th>RATE</th><th>AMOUNT</th><th>DELETE</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </div>
+  <p class="help" id="historyFooter"></p>
+</section>
+
+<!-- WORKER REPORT -->
+<section class="card">
+  <h2><svg><use href="#i-chart"/></svg> Worker-wise Report & Export</h2>
+
+  <div class="grid">
+    <div class="field">
+      <label>Select Worker</label>
+      <select id="reportWorker" onchange="renderReport()">
+        <option value="all">All Workers</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Report Period</label>
+      <select id="reportPeriod" onchange="toggleCustomDates();renderReport()">
+        <option value="all">All Time</option>
+        <option value="daily">Today</option>
+        <option value="weekly">This Week</option>
+        <option value="monthly">This Month</option>
+        <option value="custom">Custom Date Range</option>
+      </select>
+    </div>
+    <div class="field hidden" id="fromField">
+      <label>From Date</label>
+      <input type="date" id="fromDate" onchange="renderReport()">
+    </div>
+    <div class="field hidden" id="toField">
+      <label>To Date</label>
+      <input type="date" id="toDate" onchange="renderReport()">
+    </div>
+  </div>
+
+  <div id="reportArea" style="margin-top:18px">
+    <div class="report-head">
+      <h2>FLOWER WORK REPORT</h2>
+      <p id="reportWorkerName">All Workers</p>
+      <p id="reportDateRange">All Time</p>
+    </div>
+
+    <div class="report-totals">
+      <div class="report-total">
+        <small>TOTAL EARNINGS</small>
+        <strong id="reportEarnings">₹0.00</strong>
+      </div>
+      <div class="report-total">
+        <small>TOTAL ENTRIES</small>
+        <strong id="reportEntries">0</strong>
+      </div>
+      <div class="report-total">
+        <small>TOTAL QUANTITY</small>
+        <strong id="reportQuantity">0</strong>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>SL</th><th>DATE</th><th>WORKER</th><th>FLOWER</th>
+            <th>TYPE</th><th>QTY</th><th>RATE</th><th>AMOUNT</th>
+          </tr>
+        </thead>
+        <tbody id="reportBody"></tbody>
+      </table>
+    </div>
+    <p class="help" style="text-align:right;margin-top:10px" id="reportFooter"></p>
+  </div>
+
+  <div class="actions no-print">
+    <button class="success" onclick="exportWorkerPNG()">
+      <svg><use href="#i-download"/></svg> Export Worker Report PNG
+    </button>
+    <button class="primary" onclick="printWorkerReport()">
+      <svg><use href="#i-printer"/></svg> Print / Save PDF
+    </button>
+  </div>
+  <p class="help no-print">Select a worker and report period first. The exported report will contain only the selected records.</p>
+</section>
+
+<!-- BACKUP -->
+<section class="card">
+  <h2><svg><use href="#i-download"/></svg> Backup & Data Management</h2>
+  <p class="help">
+    Export all saved flower work records as a PNG image. This is a visual backup of your records.
+  </p>
+  <div class="actions">
+    <button class="purple" onclick="exportAllPNG()">
+      <svg><use href="#i-download"/></svg> Export All Data as Image
+    </button>
+    <button class="danger" onclick="deleteAllData()">
+      <svg><use href="#i-lock"/></svg> Delete All Data
+    </button>
+  </div>
+  <p class="help">
+    PNG is a visual backup and cannot automatically restore records into the application.
+    Keep a copy of your records in a safe place.
+  </p>
+</section>
+
+<footer>Flower Work Register | Data stored locally in this browser</footer>
 </div>
 
 <script>
+const $ = id => document.getElementById(id);
+const ENTRY_KEY = "flowerRegister";
+const ATTENDANCE_KEY = "flowerAttendance";
+const DELETE_PASSWORD = "2023080";
 
-// ===================================
-// STORAGE
-// ===================================
+let entries = [];
+let attendance = {};
+let selectedCalendarDate = "";
+let calendarMonth = new Date();
+let currentReport = [];
 
-let entries=[];
-let attendance={};
+function loadData(){
+  try{entries=JSON.parse(localStorage.getItem(ENTRY_KEY)||"[]")}catch(e){entries=[]}
+  try{attendance=JSON.parse(localStorage.getItem(ATTENDANCE_KEY)||"{}")}catch(e){attendance={}}
 
-try{
-    entries=JSON.parse(
-        localStorage.getItem("flowerRegister")
-    )||[];
+  if(!Array.isArray(entries))entries=[];
 
-    attendance=JSON.parse(
-        localStorage.getItem("flowerAttendance")
-    )||{};
-
-}catch(e){
-    entries=[];
-    attendance={};
+  entries=entries.map(e=>{
+    const qty=Number(e.quantity ?? e.feet ?? 0);
+    const rate=Number(e.rate ?? 0);
+    return {
+      ...e,
+      id:e.id || (Date.now()+Math.random()),
+      date:e.date || "",
+      worker:e.worker || "-",
+      flower:e.flower || "-",
+      type:e.type || "feet",
+      quantity:qty,
+      rate:rate,
+      amount:Number(e.amount ?? qty*rate)
+    };
+  });
+  saveEntries();
 }
-
-const $=id=>document.getElementById(id);
-
-$("workDate").value=new Date().toLocaleDateString("en-CA");
-
-// ===================================
-// COMMON FUNCTIONS
-// ===================================
-
-function money(n){
-    return "₹"+Number(n).toLocaleString("en-IN");
+function saveEntries(){
+  localStorage.setItem(ENTRY_KEY,JSON.stringify(entries));
 }
-
-function escapeHTML(s){
-    return String(s).replace(/[&<>"']/g,c=>({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#39;"
-    }[c]));
+function saveAttendanceData(){
+  localStorage.setItem(ATTENDANCE_KEY,JSON.stringify(attendance));
 }
-
-function fmtDate(d){
-    return new Date(d+"T00:00:00")
-    .toLocaleDateString("en-IN");
+function money(value){
+  return "₹"+Number(value||0).toLocaleString("en-IN",{
+    minimumFractionDigits:2,maximumFractionDigits:2
+  });
 }
-
-function save(){
-    localStorage.setItem(
-        "flowerRegister",
-        JSON.stringify(entries)
-    );
-
-    localStorage.setItem(
-        "flowerAttendance",
-        JSON.stringify(attendance)
-    );
+function dateISO(date=new Date()){
+  return date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
 }
-
-// ===================================
-// CALCULATOR
-// ===================================
-
+function formatDate(value){
+  if(!value)return "-";
+  const [y,m,d]=value.split("-");
+  return `${d}-${m}-${y}`;
+}
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function initialize(){
+  loadData();
+  const today=dateISO();
+  $("workDate").value=today;
+  $("todayLabel").textContent=new Date().toLocaleDateString("en-IN",{
+    weekday:"short",day:"numeric",month:"short",year:"numeric"
+  });
+  selectedCalendarDate=today;
+  calendarMonth=new Date();
+  updateCalculationLabels();
+  calculate();
+  renderAll();
+  renderCalendar();
+  $("selectedDateLabel").textContent="Selected date: "+formatDate(today);
+}
+function renderAll(){
+  renderHistory();
+  updateSummary();
+  updateWorkerOptions();
+  renderReport();
+}
+function updateSummary(){
+  const total=entries.reduce((s,e)=>s+Number(e.amount||0),0);
+  $("totalEarnings").textContent=money(total);
+  $("totalEntries").textContent=entries.length;
+}
+function updateCalculationLabels(){
+  const pieces=$("workType").value==="pieces";
+  $("quantityLabel").textContent=pieces?"Quantity (Pieces)":"Quantity (Feet)";
+  $("rateLabel").textContent=pieces?"Rate Per Piece (₹)":"Rate Per Feet (₹)";
+  calculate();
+}
 function calculate(){
-
-    let feet=Number($("feet").value)||0;
-    let rate=Number($("rate").value)||0;
-
-    $("amount").value=feet*rate;
+  const qty=Number($("quantity").value||0);
+  const rate=Number($("rate").value||0);
+  $("finalPrice").textContent=money(qty*rate);
 }
-
-$("feet").addEventListener("input",calculate);
-$("rate").addEventListener("input",calculate);
-
-// ===================================
-// ADD WORK ENTRY
-// ===================================
-
-function addEntry(){
-
-    let date=$("workDate").value;
-    let worker=$("worker").value.trim();
-    let flower=$("flower").value.trim();
-    let feet=Number($("feet").value);
-    let rate=Number($("rate").value);
-
-    if(
-        !date ||
-        !worker ||
-        !flower ||
-        $("feet").value==="" ||
-        $("rate").value==="" ||
-        feet<=0 ||
-        rate<0 ||
-        !Number.isFinite(feet) ||
-        !Number.isFinite(rate)
-    ){
-        alert("Please enter all valid details.");
-        return;
-    }
-
-    entries.push({
-        id:Date.now()+Math.random(),
-        date,
-        worker,
-        flower,
-        feet,
-        rate,
-        amount:feet*rate
-    });
-
-    if(!attendance[date]){
-        attendance[date]={status:"normal"};
-    }
-
-    save();
-    render();
-    renderCalendar();
-    clearForm();
-
-    alert("WORK DONE! Entry saved successfully.");
-}
-
 function clearForm(){
-
-    $("worker").value="";
-    $("flower").value="";
-    $("feet").value="";
-
-    calculate();
+  $("worker").value="";
+  $("flower").value="";
+  $("quantity").value="";
+  $("rate").value="";
+  $("workDate").value=dateISO();
+  $("workType").value="feet";
+  updateCalculationLabels();
+  calculate();
 }
+function addEntry(){
+  const date=$("workDate").value;
+  const worker=$("worker").value.trim();
+  const flower=$("flower").value.trim();
+  const type=$("workType").value;
+  const quantity=Number($("quantity").value);
+  const rate=Number($("rate").value);
 
-// ===================================
-// DELETE ENTRY
-// ===================================
+  if(!date||!worker||!flower){
+    alert("Please enter the work date, worker name and flower name.");
+    return;
+  }
+  if(!Number.isFinite(quantity)||quantity<=0){
+    alert("Please enter a quantity greater than zero.");
+    return;
+  }
+  if(!Number.isFinite(rate)||rate<0){
+    alert("Please enter a valid rate.");
+    return;
+  }
 
-function removeEntry(id){
+  entries.push({
+    id:Date.now()+Math.random(),
+    date,worker,flower,type,quantity,rate,amount:quantity*rate
+  });
 
-    if(!confirm("Delete this entry?"))return;
+  if(!attendance[date]||attendance[date].status==="absent"){
+    attendance[date]={status:"normal"};
+    saveAttendanceData();
+  }
 
-    entries=entries.filter(e=>e.id!==id);
-
-    save();
-    render();
+  saveEntries();
+  renderAll();
+  renderCalendar();
+  alert("Work entry saved successfully!");
+  clearForm();
 }
+function deleteEntry(id){
+  if(!confirm("Delete this work entry?"))return;
+  entries=entries.filter(e=>String(e.id)!==String(id));
+  saveEntries();
+  renderAll();
+}
+function renderHistory(){
+  const body=$("historyBody");
+  body.innerHTML="";
+  const sorted=[...entries].sort((a,b)=>b.date.localeCompare(a.date));
 
-// ===================================
-// DISPLAY TABLE
-// ===================================
-
-function render(){
-
-    $("rows").innerHTML=entries.map((e,i)=>`
-
-    <tr>
+  if(!sorted.length){
+    body.innerHTML='<tr><td colspan="9" class="empty">No work entries saved yet.</td></tr>';
+  }else{
+    sorted.forEach((e,i)=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
         <td>${i+1}</td>
-        <td>${fmtDate(e.date)}</td>
-        <td>${escapeHTML(e.worker||"-")}</td>
+        <td>${formatDate(e.date)}</td>
+        <td>${escapeHTML(e.worker)}</td>
         <td>${escapeHTML(e.flower)}</td>
-        <td>${e.feet}</td>
+        <td>${e.type==="pieces"?"Pieces":"Feet"}</td>
+        <td>${e.quantity}</td>
         <td>${money(e.rate)}</td>
         <td>${money(e.amount)}</td>
-
         <td>
-        <button onclick="removeEntry(${e.id})">X</button>
-        </td>
-    </tr>
+          <button class="danger" onclick="deleteEntry('${String(e.id)}')">
+            <svg><use href="#i-trash"/></svg> Delete
+          </button>
+        </td>`;
+      body.appendChild(tr);
+    });
+  }
 
-    `).join("");
-
-    let feet=entries.reduce(
-        (s,e)=>s+Number(e.feet),0
-    );
-
-    let total=entries.reduce(
-        (s,e)=>s+Number(e.amount),0
-    );
-
-    $("totalFeet").textContent=feet;
-    $("totalAmount").textContent=money(total);
-    $("grandTotal").textContent=money(total);
+  const totalFeet=entries.filter(e=>e.type==="feet").reduce((s,e)=>s+e.quantity,0);
+  $("historyFooter").textContent=
+    "Total earnings: "+money(entries.reduce((s,e)=>s+e.amount,0))+
+    " | Total feet-based quantity: "+totalFeet;
 }
 
-// ===================================
 // CALENDAR
-// ===================================
-
-let calendarMonth=new Date().getMonth();
-let calendarYear=new Date().getFullYear();
-let selectedDay=null;
-
-function dateKey(y,m,d){
-
-    return y+"-"+
-    String(m+1).padStart(2,"0")+"-"+
-    String(d).padStart(2,"0");
+function changeMonth(amount){
+  calendarMonth.setMonth(calendarMonth.getMonth()+amount);
+  renderCalendar();
 }
-
-function changeMonth(dir){
-
-    calendarMonth+=dir;
-
-    if(calendarMonth>11){
-        calendarMonth=0;
-        calendarYear++;
-    }
-
-    if(calendarMonth<0){
-        calendarMonth=11;
-        calendarYear--;
-    }
-
-    selectedDay=null;
-    $("dateEditor").style.display="none";
-
-    renderCalendar();
-}
-
-// ===================================
-// UPDATED CALENDAR DISPLAY
-// ===================================
-
 function renderCalendar(){
+  const year=calendarMonth.getFullYear();
+  const month=calendarMonth.getMonth();
+  $("monthLabel").textContent=calendarMonth.toLocaleDateString("en-IN",{
+    month:"long",year:"numeric"
+  });
 
-    let first=new Date(
-        calendarYear,
-        calendarMonth,
-        1
-    ).getDay();
+  const first=new Date(year,month,1);
+  const days=new Date(year,month+1,0).getDate();
+  const offset=first.getDay();
+  const today=dateISO();
+  const cal=$("calendar");
+  cal.innerHTML="";
 
-    let days=new Date(
-        calendarYear,
-        calendarMonth+1,
-        0
-    ).getDate();
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{
+    const el=document.createElement("div");
+    el.className="day-name";
+    el.textContent=d;
+    cal.appendChild(el);
+  });
 
-    $("monthTitle").textContent=
-    new Date(calendarYear,calendarMonth)
-    .toLocaleDateString("en-IN",{
-        month:"long",
-        year:"numeric"
-    });
+  for(let i=0;i<offset;i++){
+    const blank=document.createElement("div");
+    blank.className="day blank";
+    cal.appendChild(blank);
+  }
 
-    let html="";
+  for(let d=1;d<=days;d++){
+    const key=year+"-"+String(month+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    const data=attendance[key];
+    const isFuture=key>today;
+    const el=document.createElement("div");
+    el.className="day";
 
-    ["SUN","MON","TUE","WED","THU","FRI","SAT"]
-    .forEach(d=>{
-        html+=`<div class="day-name">${d}</div>`;
-    });
+    if(data?.status==="absent")el.classList.add("red");
+    else if(data?.status==="changed")el.classList.add("yellow");
+    else if(isFuture&&!data){}
+    else el.classList.add("green");
 
-    for(let i=0;i<first;i++){
-        html+=`<div class="day empty"></div>`;
-    }
-
-    let now=new Date();
-
-    now.setHours(0,0,0,0);
-
-    for(let d=1;d<=days;d++){
-
-        let key=dateKey(
-            calendarYear,
-            calendarMonth,
-            d
-        );
-
-        let currentDate=new Date(
-            calendarYear,
-            calendarMonth,
-            d
-        );
-
-        let data=attendance[key];
-
-        let status=data?data.status:"normal";
-
-        let isFuture=currentDate>now;
-
-        let cls="";
-
-        // Manual absence always red
-        if(status==="absent"){
-            cls="absent";
-        }
-
-        // Manual time change always yellow
-        else if(status==="changed"){
-            cls="changed";
-        }
-
-        // Future unmodified dates white
-        else if(isFuture&&!data){
-            cls="upcoming";
-        }
-
-        // Today and past dates green
-        else{
-            cls="normal";
-        }
-
-        let symbol=
-            status==="absent"?"A":
-            status==="changed"?"C":
-            cls==="upcoming"?"-":"P";
-
-        let todayClass=
-            currentDate.getTime()===now.getTime()
-            ?"today":"";
-
-        let selected=
-            selectedDay===key?"selected":"";
-
-        html+=`
-
-        <div class="day ${cls} ${todayClass} ${selected}">
-
-            <button onclick="selectDate('${key}')">
-
-                <b>${d}</b><br>
-                ${symbol}
-
-            </button>
-
-        </div>
-
-        `;
-    }
-
-    $("calendar").innerHTML=html;
+    if(key===selectedCalendarDate)el.classList.add("selected");
+    el.textContent=d;
+    el.title=data?.status==="changed"?"Changed time: "+(data.time||""):
+      data?.status==="absent"?"Absent":isFuture?"Upcoming":"Normal / Present";
+    el.onclick=()=>selectCalendarDate(key);
+    cal.appendChild(el);
+  }
 }
-
-// ===================================
-// SELECT DATE
-// ===================================
-
-function selectDate(key){
-
-    selectedDay=key;
-
-    let data=attendance[key]||{
-        status:"normal",
-        time:"16:30"
-    };
-
-    $("selectedDate").textContent=
-    "SELECTED DATE: "+fmtDate(key);
-
-    $("dayStatus").value=data.status||"normal";
-
-    $("customTime").value=data.time||"16:30";
-
-    $("dateEditor").style.display="block";
-
-    toggleTime();
-    renderCalendar();
+function selectCalendarDate(key){
+  selectedCalendarDate=key;
+  $("selectedDateLabel").textContent="Selected date: "+formatDate(key);
+  const data=attendance[key]||{status:"normal"};
+  $("attendanceStatus").value=data.status||"normal";
+  $("arrivalTime").value=data.time||"16:30";
+  toggleArrivalTime();
+  renderCalendar();
 }
-
-function toggleTime(){
-
-    $("timeField").style.display=
-    $("dayStatus").value==="changed"
-    ?"flex":"none";
+function toggleArrivalTime(){
+  $("arrivalField").classList.toggle("hidden",$("attendanceStatus").value!=="changed");
 }
-
-// ===================================
-// SAVE ATTENDANCE
-// ===================================
-
 function saveAttendance(){
+  if(!selectedCalendarDate){
+    alert("Select a date first.");
+    return;
+  }
+  const status=$("attendanceStatus").value;
 
-    if(!selectedDay)return;
-
-    let status=$("dayStatus").value;
-    let time=$("customTime").value;
-
-    if(status==="changed"&&!time){
-        alert("Select arrival time.");
-        return;
+  if(status==="changed"){
+    const time=$("arrivalTime").value;
+    if(!time){
+      alert("Please select an arrival time.");
+      return;
     }
+    attendance[selectedCalendarDate]={status:"changed",time};
+  }else{
+    attendance[selectedCalendarDate]={status};
+  }
 
-    attendance[selectedDay]={
-        status,
-        time:status==="changed"?time:"16:30"
-    };
-
-    save();
-    renderCalendar();
-
-    alert("Attendance updated.");
+  saveAttendanceData();
+  renderCalendar();
+  alert("Attendance saved.");
 }
-
 function resetAttendance(){
-
-    if(!selectedDay)return;
-
-    delete attendance[selectedDay];
-
-    save();
-
-    selectedDay=null;
-
-    $("dateEditor").style.display="none";
-
-    renderCalendar();
+  if(!selectedCalendarDate)return;
+  delete attendance[selectedCalendarDate];
+  saveAttendanceData();
+  $("attendanceStatus").value="normal";
+  toggleArrivalTime();
+  renderCalendar();
+  alert("Date reset to its default status.");
 }
 
-// ===================================
-// PREVIEW REPORT
-// ===================================
+// REPORT FILTERS
+function updateWorkerOptions(){
+  const select=$("reportWorker");
+  const current=select.value||"all";
+  const workers=[...new Set(entries.map(e=>e.worker).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b));
 
-function showPreview(){
+  select.innerHTML='<option value="all">All Workers</option>';
+  workers.forEach(worker=>{
+    const opt=document.createElement("option");
+    opt.value=worker;
+    opt.textContent=worker;
+    select.appendChild(opt);
+  });
+  select.value=workers.includes(current)?current:"all";
+}
+function toggleCustomDates(){
+  const custom=$("reportPeriod").value==="custom";
+  $("fromField").classList.toggle("hidden",!custom);
+  $("toField").classList.toggle("hidden",!custom);
+}
+function getReportRange(){
+  const period=$("reportPeriod").value;
+  const now=new Date();
+  const today=dateISO(now);
 
-    if(!entries.length){
-        alert("No work records available.");
-        return;
-    }
+  if(period==="daily")return {from:today,to:today,label:"Today"};
 
-    let sorted=[...entries].sort(
-        (a,b)=>a.date.localeCompare(b.date)
-    );
+  if(period==="weekly"){
+    const start=new Date(now);
+    const day=start.getDay();
+    start.setDate(start.getDate()-(day===0?6:day-1));
+    return {from:dateISO(start),to:today,label:"This Week"};
+  }
+  if(period==="monthly"){
+    const start=new Date(now.getFullYear(),now.getMonth(),1);
+    return {from:dateISO(start),to:today,label:"This Month"};
+  }
+  if(period==="custom"){
+    const from=$("fromDate").value;
+    const to=$("toDate").value;
+    return {
+      from:from||"0000-00-00",
+      to:to||"9999-99-99",
+      label:(from?formatDate(from):"Start")+" to "+(to?formatDate(to):"End")
+    };
+  }
+  return {from:"0000-00-00",to:"9999-99-99",label:"All Time"};
+}
+function renderReport(){
+  if(!$("reportWorker"))return;
 
-    $("reportRows").innerHTML=sorted.map((e,i)=>`
+  const worker=$("reportWorker").value||"all";
+  const range=getReportRange();
 
-    <tr>
+  currentReport=entries.filter(e=>
+    (worker==="all"||e.worker===worker)&&
+    e.date>=range.from&&e.date<=range.to
+  ).sort((a,b)=>a.date.localeCompare(b.date));
+
+  const total=currentReport.reduce((s,e)=>s+Number(e.amount||0),0);
+  const feet=currentReport.filter(e=>e.type==="feet").reduce((s,e)=>s+e.quantity,0);
+  const pieces=currentReport.filter(e=>e.type==="pieces").reduce((s,e)=>s+e.quantity,0);
+
+  $("reportWorkerName").textContent=worker==="all"?"All Workers":"Worker: "+worker;
+  $("reportDateRange").textContent=range.label;
+  $("reportEarnings").textContent=money(total);
+  $("reportEntries").textContent=currentReport.length;
+  $("reportQuantity").textContent=feet+" feet | "+pieces+" pieces";
+
+  const body=$("reportBody");
+  body.innerHTML="";
+
+  if(!currentReport.length){
+    body.innerHTML='<tr><td colspan="8" class="empty">No records found for this selection.</td></tr>';
+  }else{
+    currentReport.forEach((e,i)=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
         <td>${i+1}</td>
-        <td>${fmtDate(e.date)}</td>
-        <td>${escapeHTML(e.worker||"-")}</td>
+        <td>${formatDate(e.date)}</td>
+        <td>${escapeHTML(e.worker)}</td>
         <td>${escapeHTML(e.flower)}</td>
-        <td>${e.feet}</td>
+        <td>${e.type==="pieces"?"Pieces":"Feet"}</td>
+        <td>${e.quantity}</td>
         <td>${money(e.rate)}</td>
-        <td>${money(e.amount)}</td>
-    </tr>
-
-    `).join("");
-
-    let total=entries.reduce(
-        (s,e)=>s+e.amount,0
-    );
-
-    let feet=entries.reduce(
-        (s,e)=>s+e.feet,0
-    );
-
-    $("rFeet").textContent=feet;
-    $("rAmount").textContent=money(total);
-
-    $("rOverall").textContent=
-    "TOTAL EARNINGS: "+money(total);
-
-    $("reportInfo").textContent=
-    "Generated: "+new Date().toLocaleDateString("en-IN");
-
-    $("preview").style.display="block";
+        <td>${money(e.amount)}</td>`;
+      body.appendChild(tr);
+    });
+  }
+  $("reportFooter").textContent="Generated on "+new Date().toLocaleString("en-IN");
 }
 
-function closePreview(){
-    $("preview").style.display="none";
+// PNG IMAGE EXPORT
+function downloadCanvas(canvas,filename){
+  const link=document.createElement("a");
+  link.download=filename;
+  link.href=canvas.toDataURL("image/png");
+  link.click();
 }
+function makeReportCanvas(title,subtitle,records){
+  const width=1400;
+  const rowHeight=45;
+  const top=240;
+  const height=Math.max(480,top+records.length*rowHeight+100);
 
-// ===================================
-// SAVE REPORT IMAGE
-// ===================================
+  const canvas=document.createElement("canvas");
+  canvas.width=width;
+  canvas.height=height;
+  const ctx=canvas.getContext("2d");
 
-async function saveImage(){
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(0,0,width,height);
 
-    let sorted=[...entries].sort(
-        (a,b)=>a.date.localeCompare(b.date)
-    );
+  ctx.fillStyle="#20252b";
+  ctx.fillRect(0,0,width,115);
 
-    let canvas=document.createElement("canvas");
+  ctx.fillStyle="#ffffff";
+  ctx.font="bold 34px Arial";
+  ctx.textAlign="center";
+  ctx.fillText(title,width/2,52);
+  ctx.font="18px Arial";
+  ctx.fillText(subtitle,width/2,85);
 
-    let width=1200;
-    let rowHeight=65;
+  const total=records.reduce((s,e)=>s+Number(e.amount||0),0);
+  const feet=records.filter(e=>e.type==="feet").reduce((s,e)=>s+e.quantity,0);
+  const pieces=records.filter(e=>e.type==="pieces").reduce((s,e)=>s+e.quantity,0);
 
-    canvas.width=width;
-    canvas.height=370+sorted.length*rowHeight;
+  ctx.fillStyle="#20252b";
+  ctx.textAlign="left";
+  ctx.font="bold 22px Arial";
+  ctx.fillText("Total Earnings: "+money(total),45,155);
+  ctx.fillText("Total Entries: "+records.length,470,155);
+  ctx.font="18px Arial";
+  ctx.fillText("Quantity: "+feet+" feet | "+pieces+" pieces",45,195);
+  ctx.fillText("Generated: "+new Date().toLocaleString("en-IN"),700,195);
 
-    let ctx=canvas.getContext("2d");
+  const cols=[
+    {name:"SL",x:45,w:65},
+    {name:"DATE",x:110,w:145},
+    {name:"WORKER",x:255,w:190},
+    {name:"FLOWER",x:445,w:220},
+    {name:"TYPE",x:665,w:120},
+    {name:"QTY",x:785,w:105},
+    {name:"RATE",x:890,w:180},
+    {name:"AMOUNT",x:1070,w:260}
+  ];
 
-    ctx.fillStyle="white";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
+  let y=225;
+  ctx.fillStyle="#e9e9e9";
+  ctx.fillRect(35,y,width-70,rowHeight);
+  ctx.fillStyle="#111";
+  ctx.font="bold 17px Arial";
+  ctx.textAlign="left";
 
-    ctx.fillStyle="black";
-    ctx.textAlign="center";
-    ctx.font="bold 40px Arial";
+  cols.forEach(c=>ctx.fillText(c.name,c.x+8,y+29));
+  y+=rowHeight;
 
-    ctx.fillText("FLOWER WORK REPORT",600,65);
+  records.forEach((e,i)=>{
+    ctx.fillStyle=i%2===0?"#ffffff":"#f5f5f5";
+    ctx.fillRect(35,y,width-70,rowHeight);
 
-    ctx.font="22px Arial";
+    ctx.strokeStyle="#333";
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(35,y+rowHeight);
+    ctx.lineTo(width-35,y+rowHeight);
+    ctx.stroke();
 
-    ctx.fillText(
-        "DAILY FLOWER TYING REGISTER",
-        600,110
-    );
-
-    ctx.textAlign="left";
-    ctx.font="20px Arial";
-
-    ctx.fillText(
-        "Generated: "+new Date().toLocaleDateString("en-IN"),
-        35,165
-    );
-
-    let x=[35,130,290,500,760,870,1020];
-
-    let heads=[
-        "SL","DATE","WORKER","FLOWER",
-        "FEET","RATE","AMOUNT"
+    const values=[
+      i+1,formatDate(e.date),e.worker,e.flower,
+      e.type==="pieces"?"Pieces":"Feet",e.quantity,
+      money(e.rate),money(e.amount)
     ];
 
-    ctx.fillStyle="black";
-    ctx.fillRect(20,195,1160,60);
+    ctx.fillStyle="#111";
+    ctx.font="16px Arial";
 
-    ctx.fillStyle="white";
-    ctx.font="bold 18px Arial";
+    values.forEach((v,j)=>{
+      const c=cols[j];
+      let text=String(v);
+      const maxWidth=c.w-16;
 
-    heads.forEach((h,i)=>{
-        ctx.fillText(h,x[i],233);
+      while(ctx.measureText(text).width>maxWidth&&text.length>3){
+        text=text.slice(0,-2)+"…";
+      }
+      ctx.fillText(text,c.x+8,y+28);
     });
+    y+=rowHeight;
+  });
 
-    let y=300;
+  ctx.fillStyle="#555";
+  ctx.font="14px Arial";
+  ctx.textAlign="center";
+  ctx.fillText("Flower Work Register",width/2,height-28);
 
-    ctx.fillStyle="black";
-    ctx.font="18px Arial";
-
-    sorted.forEach((e,i)=>{
-
-        let values=[
-            i+1,
-            fmtDate(e.date),
-            e.worker||"-",
-            e.flower,
-            e.feet,
-            money(e.rate),
-            money(e.amount)
-        ];
-
-        values.forEach((v,j)=>{
-            ctx.fillText(String(v),x[j],y);
-        });
-
-        ctx.beginPath();
-        ctx.strokeStyle="black";
-        ctx.moveTo(20,y+18);
-        ctx.lineTo(1180,y+18);
-        ctx.stroke();
-
-        y+=rowHeight;
-    });
-
-    let total=entries.reduce(
-        (s,e)=>s+e.amount,0
-    );
-
-    let feet=entries.reduce(
-        (s,e)=>s+e.feet,0
-    );
-
-    ctx.font="bold 24px Arial";
-
-    ctx.fillText(
-        "TOTAL FEET: "+feet,
-        35,y+40
-    );
-
-    ctx.textAlign="right";
-
-    ctx.fillText(
-        "TOTAL: "+money(total),
-        1160,y+40
-    );
-
-    canvas.toBlob(async blob=>{
-
-        if(!blob){
-            alert("Image generation failed.");
-            return;
-        }
-
-        let file=new File(
-            [blob],
-            "Flower-Work-Report.png",
-            {type:"image/png"}
-        );
-
-        try{
-
-            if(
-                navigator.canShare&&
-                navigator.canShare({files:[file]})
-            ){
-
-                await navigator.share({
-                    files:[file],
-                    title:"Flower Work Report"
-                });
-
-                return;
-            }
-
-        }catch(e){
-
-            if(e.name==="AbortError")return;
-        }
-
-        let url=URL.createObjectURL(blob);
-
-        let a=document.createElement("a");
-
-        a.href=url;
-        a.download="Flower-Work-Report.png";
-        a.click();
-
-        setTimeout(
-            ()=>URL.revokeObjectURL(url),
-            3000
-        );
-
-    },"image/png");
+  return canvas;
+}
+function exportWorkerPNG(){
+  const worker=$("reportWorker").value==="all"?"All Workers":$("reportWorker").value;
+  const period=getReportRange().label;
+  const canvas=makeReportCanvas(
+    "FLOWER WORK REPORT",
+    worker+" | "+period,
+    currentReport
+  );
+  downloadCanvas(canvas,"flower-worker-report.png");
+}
+function exportAllPNG(){
+  if(!entries.length){
+    alert("No work records to export.");
+    return;
+  }
+  const records=[...entries].sort((a,b)=>a.date.localeCompare(b.date));
+  const canvas=makeReportCanvas(
+    "COMPLETE FLOWER WORK BACKUP",
+    "All workers | All saved work records",
+    records
+  );
+  downloadCanvas(canvas,"flower-work-complete-backup.png");
 }
 
-// ===================================
-// BACKUP
-// ===================================
+// PRINT / PDF
+function printWorkerReport(){
+  const area=$("reportArea").innerHTML;
+  const win=window.open("","_blank");
 
-function backup(){
+  if(!win){
+    alert("Please allow pop-ups to print or save as PDF.");
+    return;
+  }
 
-    let data={
-        entries,
-        attendance
-    };
-
-    let blob=new Blob(
-        [JSON.stringify(data,null,2)],
-        {type:"application/json"}
-    );
-
-    let url=URL.createObjectURL(blob);
-
-    let a=document.createElement("a");
-
-    a.href=url;
-    a.download="flower-work-backup.json";
-    a.click();
-
-    URL.revokeObjectURL(url);
+  win.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>Flower Work Report</title>
+    <style>
+      body{font-family:Arial;padding:20px;color:#111}
+      h2,p{text-align:center}
+      table{width:100%;border-collapse:collapse;font-size:12px}
+      th,td{border:1px solid #222;padding:8px;text-align:center}
+      th{background:#eee}
+      .report-totals{display:flex;gap:10px;margin:20px 0}
+      .report-total{border:1px solid #777;padding:10px;flex:1}
+      .report-total small,.report-total strong{display:block;margin:5px}
+    </style>
+    </head>
+    <body>
+      ${area}
+      <script>
+        window.onload=()=>window.print();
+      <\/script>
+    </body>
+    </html>
+  `);
+  win.document.close();
 }
 
-// ===================================
-// IMPORT BACKUP
-// ===================================
+// PASSWORD PROTECTED DELETE ALL
+function deleteAllData(){
+  const password=prompt("Enter password to delete all data:");
+  if(password===null)return;
 
-function importFile(){
-    $("backupFile").click();
+  if(password!==DELETE_PASSWORD){
+    alert("Incorrect password. Data has not been deleted.");
+    return;
+  }
+
+  if(!confirm("Are you sure? This will permanently delete all flower work entries and attendance records from this browser.")){
+    return;
+  }
+
+  entries=[];
+  attendance={};
+  saveEntries();
+  saveAttendanceData();
+  renderAll();
+  renderCalendar();
+  alert("All data has been deleted.");
 }
 
-function restoreBackup(event){
-
-    let file=event.target.files[0];
-
-    if(!file)return;
-
-    let reader=new FileReader();
-
-    reader.onload=()=>{
-
-        try{
-
-            let data=JSON.parse(reader.result);
-
-            if(
-                !data||
-                !Array.isArray(data.entries)||
-                !data.attendance||
-                typeof data.attendance!=="object"||
-                Array.isArray(data.attendance)
-            ){
-                throw new Error("Invalid backup");
-            }
-
-            if(!confirm(
-                "Replace current records with this backup?"
-            ))return;
-
-            entries=data.entries;
-            attendance=data.attendance;
-
-            save();
-            render();
-            renderCalendar();
-
-            alert("Backup restored successfully.");
-
-        }catch(e){
-
-            alert("Invalid backup file.");
-
-        }
-
-        event.target.value="";
-    };
-
-    reader.readAsText(file);
-}
-
-// ===================================
-// DELETE ALL
-// ===================================
-
-function clearAll(){
-
-    if(!confirm(
-        "Delete all flower records and attendance?"
-    ))return;
-
-    entries=[];
-    attendance={};
-
-    save();
-    render();
-    renderCalendar();
-
-    alert("All data deleted.");
-}
-
-// ===================================
-// INITIALIZE
-// ===================================
-
-render();
-renderCalendar();
-calculate();
-
+initialize();
 </script>
 </body>
 </html>
